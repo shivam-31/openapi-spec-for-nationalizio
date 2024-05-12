@@ -1,3 +1,56 @@
 # Nationalize.io Nationality Prediction API
 
 This API, adhering to OpenAPI 3.0.0, offers predictions on the nationality of a last name via a simple GET request. Use the endpoint `https://api.nationalize.io/` with the required `name` query parameter to get probable nationalities. Each response includes potential countries with ISO country codes and the respective probability scores. Error handling provides feedback for bad requests and server issues.
+
+```yaml
+openapi: 3.0.0
+info:
+  title: Nationality Prediction API
+  description: This API predicts the nationality of a last name provided via the "name" parameter.
+  version: 1.0.0
+servers:
+    - url: https://api.nationalize.io/
+      description: Main API server
+paths:
+  /:
+    get:
+      operationId: getNationality
+      summary: Predicts the nationality of a given last name.
+      description: Provides a list of probable nationalities for the given last name.
+      parameters:
+        - in: query
+          name: name
+          required: true
+          description: The last name to predict the nationality for.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: An array of possible nationalities with probability scores.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: Smith
+                  country:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        country_id:
+                          type: string
+                          description: ISO 3166-1 alpha-2 country code.
+                          example: US
+                        probability:
+                          type: number
+                          format: float
+                          description: Probability score of the association between the name and country.
+                          example: 0.08167
+        "400":
+          description: Bad request (invalid input or missing "name" parameter).
+        "500":
+          description: Internal server error.
+```
